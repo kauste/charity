@@ -92,7 +92,7 @@ class Validations{
             echo "\033[31mDonation should be more that 0. Please try again.\033[0m\n";
             return false;
         }
-        if($amount != number_format($amount, 2 ,'.')){
+        if($amount != (float) number_format($amount, 2 ,'.', '')){
             echo "\033[31mDonation should be decimal with two symbols after dot. Please try again.\033[0m\n";
             return false;
         }

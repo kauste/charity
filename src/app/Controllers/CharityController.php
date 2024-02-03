@@ -1,13 +1,15 @@
 <?php
 namespace Charity\Controllers;
 use Charity\Services\Functions;
-use Charity\JsonDB;
+use Charity\SerializationDB;
+use DateTime;
+use DateTimeZone;
 
 class CharityController{
     public $db, $charities;
 
     public function __construct() {
-        $this->db = new JsonDB('charity');
+        $this->db = new SerializationDB('charity');
         $this->charities = $this->db->showAll();
 
     }
@@ -31,15 +33,15 @@ class CharityController{
 
     private function getCharityId()
     {
-        return (int) Functions::getVariable( 'Enter chosen charity ID: ', 'isValidCharityId', [$this->charities]);
+        return (int) Functions::getVariable( 'Enter chosen charity ID', 'isValidCharityId', [$this->charities]);
     }
     private function getCharityName()
     {
-        return Functions::getVariable( 'Enter charity name: ', 'isValidCharityName', [$this->charities]);
+        return Functions::getVariable( 'Enter charity name', 'isValidCharityName', [$this->charities]);
     }
     private function getCharityEmail()
     {
-        return Functions::getVariable( 'Enter charity email: ', 'isValidCharityEmail', [$this->charities]);
+        return Functions::getVariable( 'Enter charity email', 'isValidCharityEmail', [$this->charities]);
     }
 
     public function view()
@@ -68,7 +70,6 @@ class CharityController{
     {
         //get id
         $id = $this->getCharityId();
-        echo 'ID: ' . $id;
         //show chosen item
         $item =  array_values($this->db->getItem($id));
         Functions::renderTable($item);
@@ -97,5 +98,21 @@ class CharityController{
             echo "\033[32mCharity \"" . $item[0]['charity_name'] . "\" is deleted.\033[0m\n";
         }
 
+    }
+    public function getCVS(){
+        if ($this->charities) {
+            $dateTime = (new DateTime('now', new DateTimeZone('Europe/Vilnius')))->format('-Y-m-d-H-i-s') ;
+            $keys = Functions::getKeys($this->charities);
+            $output = fopen(BASE_DIR . '/cvs/charities'. $dateTime.'.csv', 'w');
+            fputcsv($output, $keys);
+            foreach ($this->charities as $row) {
+                fputcsv($output, $row);
+            }
+            fclose( $output );
+
+            echo "CSV file generated successfully.\n";
+        } else {
+            echo "No data to export.\n";
+        }
     }
 }

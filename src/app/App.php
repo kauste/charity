@@ -15,9 +15,9 @@ class App{
             echo "3 Update Charity\n";
             echo "4 Delete Charity\n";
             echo "5 Add Donation\n";
-            echo "6 Exit\n";
+            echo "6 Get Charities CVS file\n";
+            echo "7 Exit\n";
             echo "\033[33mChoose an option:\033[0m";
-        
             // Get user input
             $choice = trim(fgets(STDIN));
             $choice = $choice == (int) $choice? (int) $choice : $choice;
@@ -27,7 +27,8 @@ class App{
                 3 => $charityController->update(),
                 4 => $charityController->delete(),
                 5 => $donationController->create(),
-                6 => exit(),
+                6 => $charityController->getCVS(),
+                7 => exit(),
                 default => self::invalidArgumentException() ,
             };
         }

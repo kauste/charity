@@ -2,13 +2,18 @@
 namespace Charity\Services;
 
 class Functions {
-    public static function renderTable($data)
+    public static function getKeys($data)
     {
         // table names
         $keys = array_map(function($item) use ($data){
             $key = array_search($item, $data[0]); 
             return strtoupper(str_replace('_', ' ', $key));
         }, $data[0]);
+        return $keys;
+    }
+    public static function renderTable($data)
+    {
+        $keys = self::getKeys($data);
         $data = [$keys, ...$data];
         // longs columns
         $longestColumns = [];

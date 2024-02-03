@@ -2,7 +2,7 @@
 namespace Charity\Controllers;
 use Charity\Controllers\CharityController;
 use Charity\Services\Functions;
-use Charity\JsonDB;
+use Charity\SerializationDB;
 use DateTime;
 use DateTimeZone;
 
@@ -12,7 +12,7 @@ class DonationController
 
     public function __construct() 
     {
-        $this->db = new JsonDB('donation');
+        $this->db = new SerializationDB('donation');
         $this->donations = $this->db->showAll();
 
     }
@@ -29,7 +29,9 @@ class DonationController
             exit();
         }
         $donorName = Functions::getVariable( 'Enter donor name: ', 'isValidDonorName', [$this->donations]);
-        $amount = (float) Functions::getVariable( 'Enter amount of donation in euros: ', 'isValidDonationAmount', [$this->donations]);
+        $amount = Functions::getVariable( 'Enter amount of donation in euros: ', 'isValidDonationAmount', [$this->donations]);
+        // $amount = (float) str_replace( ',', '.', $amount);
+
         $dateTime = new DateTime('now', new DateTimeZone('Europe/Vilnius'));
         
         $this->donations = $this->db->create([
